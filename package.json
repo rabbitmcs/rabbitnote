@@ -1,0 +1,39 @@
+{
+  "name": "rabbitnote",
+  "productName": "RabbitNote",
+  "version": "1.3.0",
+  "description": "A minimal encrypted notebook with Google Drive sync",
+  "main": "src/main/main.js",
+  "author": "Rabbit",
+  "homepage": "https://itsrabbit.com",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/core.test.js",
+    "dist": "electron-builder --linux deb AppImage --publish never"
+  },
+  "build": {
+    "appId": "com.itsrabbit.rabbitnote",
+    "files": [
+      "src/**/*"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "linux": {
+      "category": "Office",
+      "icon": "build/icon.png",
+      "maintainer": "Rabbit",
+      "synopsis": "Encrypted notebook"
+    }
+  },
+  "devDependencies": {
+    "@fontsource/caveat": "^5.3.0",
+    "@fontsource/courier-prime": "^5.3.0",
+    "@fontsource/kalam": "^5.3.0",
+    "@fontsource/newsreader": "^5.3.0",
+    "electron": "^45.2.1",
+    "electron-builder": "^26.18.0"
+  }
+}

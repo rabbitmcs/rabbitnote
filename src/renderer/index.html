@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; font-src 'self'; img-src 'self' data:">
+<title>RabbitNote</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-font="typewriter">
+
+<svg width="0" height="0" class="defs" aria-hidden="true"><defs>
+  <symbol id="rabbit" viewBox="20 2 165 186"><g fill="currentColor"><ellipse cx="86" cy="42" rx="12" ry="36" transform="rotate(14 86 42)"/><ellipse cx="62" cy="44" rx="12" ry="36" transform="rotate(-6 62 44)"/><ellipse cx="66" cy="92" rx="30" ry="25"/><path d="M60 100C80 84 130 84 150 112C170 140 162 180 130 184L66 184C56 184 54 172 66 170L76 168C70 150 62 126 60 100Z"/><circle cx="166" cy="150" r="14"/></g><circle class="eye" cx="56" cy="88" r="5"/></symbol>
+</defs></svg>
+
+<main id="gate" class="gate" hidden>
+  <form id="gateForm" class="tag-card">
+    <span class="hole" aria-hidden="true"></span>
+    <svg class="mark"><use href="#rabbit"/></svg>
+    <h1>RabbitNote</h1>
+
+    <div id="gateChoose" hidden>
+      <p>Your notes are encrypted on this computer before they go anywhere.</p>
+      <button type="button" class="btn primary" id="gateNew">Start a new notebook</button>
+      <button type="button" class="btn" id="gateFromDrive">Open my notebook from Google Drive</button>
+      <button type="button" class="btn" id="gateRestore">Restore from a backup file</button>
+    </div>
+
+    <div id="gatePass" hidden>
+      <p id="gateHint"></p>
+      <label><span id="passLabel">Passphrase</span><input id="pass" type="password" autocomplete="off"></label>
+      <label id="pass2Row" hidden>Type it again<input id="pass2" type="password" autocomplete="off"></label>
+      <button type="submit" class="btn primary" id="gateGo">Unlock</button>
+      <button type="button" class="btn quiet" id="gatePassBack" hidden>Back</button>
+    </div>
+
+    <p id="gateErr" class="err" role="alert"></p>
+  </form>
+</main>
+
+<div id="app" class="app" hidden>
+  <aside class="cover">
+    <header class="brand">
+      <svg class="mark"><use href="#rabbit"/></svg>
+      <span>RabbitNote</span>
+      <button class="icon" id="lockBtn" title="Lock (Ctrl+L)" aria-label="Lock notebook">
+        <svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3M6 11h12v9H6z"/></svg>
+      </button>
+      <button class="icon" id="settingsBtn" title="Settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>
+      </button>
+    </header>
+
+    <input id="search" class="search" type="search" placeholder="Search your notes" aria-label="Search your notes">
+
+    <div id="browse">
+      <section class="cal" aria-label="Calendar">
+        <div class="cal-head">
+          <button class="icon" id="calPrev" aria-label="Previous month"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <span id="calTitle"></span>
+          <button class="icon" id="calNext" aria-label="Next month"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </section>
+      <section class="tags" id="tags" aria-label="Tags"></section>
+    </div>
+    <div id="results" class="results" hidden></div>
+
+    <button id="syncLine" class="sync-line"></button>
+  </aside>
+
+  <section class="desk">
+    <article class="page">
+      <header class="page-head">
+        <button class="icon" id="dayPrev" aria-label="Previous day" title="Previous day (Alt+Left)"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <h2 id="dateTitle" class="tape"></h2>
+        <button class="icon" id="dayNext" aria-label="Next day" title="Next day (Alt+Right)"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        <button class="icon" id="imgBtn" aria-label="Insert image" title="Insert image"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1.500"/><circle cx="8.500" cy="10" r="1.500"/><path d="M4 18l5-5 3 3 3.500-4 4.500 5"/></svg></button>
+        <button class="today" id="todayBtn" title="Today (Ctrl+T)">Today</button>
+      </header>
+      <div class="tools" role="toolbar" aria-label="Formatting">
+        <button class="tool" id="tBold" title="Bold (Ctrl+B)" aria-label="Bold"><b>B</b></button>
+        <button class="tool" id="tItalic" title="Italic (Ctrl+I)" aria-label="Italic"><i>I</i></button>
+        <button class="tool" id="tUnder" title="Underline (Ctrl+U)" aria-label="Underline"><u>U</u></button>
+        <span class="tool-gap"></span>
+        <button class="tool" id="tHl" title="Highlighter" aria-label="Highlighter" aria-haspopup="true"><svg viewBox="0 0 24 24"><path d="M14 4l6 6-8 8H7l-2-2v-3z"/><path d="M4 21h9"/></svg><span class="swatch" id="tHlSwatch"></span></button>
+        <button class="tool" id="tTape" title="Tape title" aria-label="Tape title"><svg viewBox="0 0 24 24"><path d="M3 8l2 1.500L3 11l2 1.500L3 14l2 1.500-2 .5h18l-2-.5 2-1.500-2-1.500 2-1.500-2-1.500L21 7H3z"/></svg></button>
+        <button class="tool" id="tTable" title="Table" aria-label="Table" aria-haspopup="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 10h16M4 15h16M10 5v14M15 5v14"/></svg></button>
+        <button class="tool" id="tDraw" title="Draw on the page" aria-label="Draw on the page" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M4 20c1-4 2-5 3-6L17 4l3 3L10 17c-1 1-2 2-6 3z"/></svg></button>
+        <span class="draw-tools" id="drawTools" hidden>
+          <span class="tool-gap"></span>
+          <input type="color" id="drawColor" value="#1f2c55" aria-label="Pen color" title="Pen color">
+          <button class="tool pen-size on" data-w="2" aria-label="Thin pen" title="Thin pen"><span style="height:2px"></span></button>
+          <button class="tool pen-size" data-w="4" aria-label="Medium pen" title="Medium pen"><span style="height:4px"></span></button>
+          <button class="tool pen-size" data-w="8" aria-label="Thick pen" title="Thick pen"><span style="height:8px"></span></button>
+          <button class="tool" id="drawErase" title="Eraser" aria-label="Eraser" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M9 20l-5-5L14 5l6 6-9 9zM13 20h8"/></svg></button>
+          <button class="tool" id="drawUndo" title="Undo last line" aria-label="Undo last line"><svg viewBox="0 0 24 24"><path d="M9 7L4 12l5 5M4 12h11a5 5 0 0 1 0 10h-2"/></svg></button>
+        </span>
+      </div>
+      <div class="ed-box"><div id="editor" class="empty" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Note for this day" data-placeholder="Write something. Add #tags anywhere."></div><div class="ink-box" id="inkBox"><svg class="ink" id="inkSvg"></svg></div></div>
+      <input id="imgFile" type="file" accept="image/*" multiple hidden>
+      <footer class="page-foot"><span id="saved"></span><span id="words"></span></footer>
+    </article>
+  </section>
+</div>
+
+<div id="pop" class="pop" hidden></div>
+
+<dialog id="settings" class="sheet">
+  <form method="dialog" class="sheet-head">
+    <h2>Settings</h2>
+    <button class="icon" aria-label="Close settings"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </form>
+
+  <section>
+    <h3>Writing</h3>
+    <div class="fonts" role="radiogroup" aria-label="Writing font">
+      <label><input type="radio" name="font" value="typewriter"><span class="f-typewriter">Typewriter</span></label>
+      <label><input type="radio" name="font" value="book"><span class="f-book">Book</span></label>
+      <label><input type="radio" name="font" value="hand"><span class="f-hand">Handwriting</span></label>
+    </div>
+    <label class="gf">Or use any Google font<input id="gfInput" list="gfList" placeholder="Choose a font" autocomplete="off" spellcheck="false"></label>
+    <datalist id="gfList"></datalist>
+    <p id="gfMsg" role="status"></p>
+  </section>
+
+  <section>
+    <h3>Images</h3>
+    <label class="check"><input type="checkbox" id="imgTape"> Show tape on images</label>
+  </section>
+
+  <section>
+    <h3>Colors</h3>
+    <div class="colors" id="colors"></div>
+    <button class="btn" id="resetColors" type="button">Reset to default look</button>
+  </section>
+
+  <section>
+    <h3>Google Drive</h3>
+    <div id="driveOn" hidden>
+      <p id="driveStatus"></p>
+      <button class="btn" id="syncNow">Sync now</button>
+      <button class="btn quiet" id="driveOff">Disconnect</button>
+    </div>
+    <div id="driveSetup" hidden>
+      <p>Keep your computers in step. Everything is encrypted before it uploads, and RabbitNote can only touch its own files.</p>
+      <button class="btn primary" id="driveOn2">Sign in with Google</button>
+    </div>
+    <p id="driveErr" class="err" role="alert"></p>
+  </section>
+
+  <section>
+    <h3>Change passphrase</h3>
+    <form id="passForm">
+      <label>Current passphrase<input id="pwCur" type="password" autocomplete="off"></label>
+      <label>New passphrase<input id="pwNew" type="password" autocomplete="off"></label>
+      <label>Type it again<input id="pwNew2" type="password" autocomplete="off"></label>
+      <button class="btn" type="submit">Change passphrase</button>
+      <p id="pwMsg" role="status"></p>
+    </form>
+  </section>
+
+  <section>
+    <h3>Backup</h3>
+    <p>Saves your whole notebook, still encrypted, to one file. To restore it, install RabbitNote, choose Restore from a backup file, and enter your passphrase.</p>
+    <button class="btn" id="backupBtn">Back up notebook</button>
+    <p id="backupMsg" role="status"></p>
+  </section>
+
+  <section>
+    <h3>Export</h3>
+    <p>Saves every note to one unencrypted text file.</p>
+    <button class="btn" id="exportBtn">Export as plain text</button>
+  </section>
+</dialog>
+
+<script src="google-fonts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

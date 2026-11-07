@@ -1,0 +1,170 @@
+@font-face { font-family: Caveat; src: url(caveat-latin-600-normal.woff2); font-weight: 600; font-display: swap; }
+@font-face { font-family: Newsreader; src: url(newsreader-latin-400-normal.woff2); font-display: swap; }
+@font-face { font-family: Newsreader; src: url(newsreader-latin-400-italic.woff2); font-style: italic; font-display: swap; }
+:root {
+  --kraft: #a98b63; --kraft-deep: #8a6c44; --paper: #f3ecc4; --paper-edge: #e9dc9d; --rule: #a9bfd0; --margin: #d9806f; --ink: #1f2c55; --tape: #8fb0b6; --tape-ink: #18243f;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .22 0 0 0 0 .1 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  --ring: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='58' height='40'%3E%3Cpolygon points='38,14 50,14 53,20 50,26 38,26 35,20' fill='%23776247'/%3E%3Cpolygon points='8,20 13,11 25,7 36,8 45,16 45,21 35,14 25,13 15,16 12,23' fill='%2393989b'/%3E%3Cpolygon points='8,20 13,11 25,7 36,8 45,16 40,14 26,10 15,13' fill='%23c6cacb'/%3E%3C/svg%3E");
+  --line: 32px; --spiral: 92px;
+}
+* { box-sizing: border-box; }
+html { background: #8c6d4b url(wood.svg?v=6) center top / 1600px auto repeat fixed; }
+.props { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+.props img { position: absolute; display: block; }
+.plant { width: 620px; left: -150px; top: -170px; }
+/* phone is sized so its middle sits on the right screen edge */
+.pencils { width: 170px; left: 70px; bottom: -70px; }
+.cup { width: 500px; right: calc(50vw - 1030px); top: 10px; }
+.phone { width: 800px; right: -533px; top: calc(100vh - 440px); }
+@media (max-width: 1700px) { .pencils { left: 20px; } .plant { left: -260px; } }
+@media (max-width: 1300px) { .props { display: none; } }
+
+body { margin: 0; min-height: 100vh; padding: 44px 24px 64px; color: var(--ink); font: 19px/var(--line) Newsreader, Georgia, serif; }
+a { color: inherit; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* The book: kraft cover under a stack of paper, spiral-bound on the left, tabs on the right */
+.notebook { position: relative; max-width: 1000px; margin: 0 auto; padding: 12px 16px 16px 10px; background: var(--kraft); border-radius: 4px; box-shadow: 16px 18px 0 rgba(40, 26, 12, .42); }
+.notebook::before { content: ""; position: absolute; z-index: 3; top: 22px; bottom: 26px; left: -18px; width: 58px; background: var(--ring) 0 0 / 58px 40px no-repeat round; pointer-events: none; }
+.page { position: relative; z-index: 2; min-height: calc(100vh - 136px); padding: 26px 40px var(--line) var(--spiral); container-type: inline-size; border-radius: 2px;
+  background:
+    linear-gradient(90deg, transparent 74px, var(--margin) 74px, var(--margin) 75.5px, transparent 75.5px),
+    repeating-linear-gradient(transparent 0, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px), var(--rule) var(--line)),
+    var(--paper);
+  background-position: 0 0, 0 -5px, 0 0;
+  box-shadow: 5px 5px 0 #dcd3a8; }
+
+.tabs { position: absolute; z-index: 1; top: 42px; left: 100%; display: grid; gap: 10px; }
+.tabs a { display: block; width: 104px; margin-left: -10px; padding: 4px 12px 4px 20px; border-radius: 0 3px 3px 0; color: var(--tape-ink); font: 600 24px/30px Caveat, cursive; text-decoration: none; box-shadow: 5px 5px 0 rgba(40, 26, 12, .38); transition: transform .12s; }
+.tabs a:nth-child(1) { background: #8fb0b6; } .tabs a:nth-child(2) { background: #e3bf55; } .tabs a:nth-child(3) { background: #d9805f; }
+.tabs a:hover { transform: translateX(5px); }
+.tabs a[aria-current] { transform: translateX(14px); }
+
+.brand { display: flex; align-items: center; gap: 8px; height: 64px; font: 600 28px/1 Caveat, cursive; text-decoration: none; }
+.brand img { width: 32px; height: 32px; }
+h1 { display: block; width: fit-content; margin: 6px 0 var(--line); padding: 3px 20px 4px; height: 64px; background: color-mix(in srgb, var(--tape) 62%, transparent); color: var(--tape-ink); font: 600 40px/56px Caveat, cursive; transform: rotate(-.8deg);  }
+h2 { margin: var(--line) 0 0; font: 600 30px/var(--line) Caveat, cursive; }
+p, ul { margin: 0 0 var(--line); max-width: 66ch; }
+ul { padding-left: 22px; }
+.small { font-style: italic; }
+
+@media (max-width: 1240px) {
+  .tabs { position: relative; left: auto; top: auto; display: flex; gap: 6px; margin: 0 0 -6px 34px; }
+  .tabs a { width: auto; margin: 0; padding: 2px 14px 8px; border-radius: 3px 3px 0 0; font-size: 22px; }
+  .tabs a:hover, .tabs a[aria-current] { transform: translateY(-4px); }
+  .notebook { margin-top: 44px; }
+  .tabs { position: absolute; bottom: 100%; margin: 0 0 0 44px; }
+}
+@media (max-width: 640px) {
+  :root { --spiral: 58px; }
+  body { padding: 50px 10px 30px 18px; }
+  .notebook { padding: 8px 9px 11px 7px; }
+  .notebook::before { left: -14px; width: 44px; background-size: 44px 30px; }
+  .page { min-height: 0; padding-right: 16px; background: linear-gradient(90deg, transparent 46px, var(--margin) 46px, var(--margin) 47.5px, transparent 47.5px), repeating-linear-gradient(transparent 0, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px), var(--rule) var(--line)), var(--paper); background-position: 0 0, 0 -5px, 0 0; }
+  .tabs { margin-left: 26px; }
+  h1 { font-size: 32px; padding-inline: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .tabs a { transition: none; } }
+
+/* One-screen book: pages turn instead of scrolling. Without scripts the pages above still work as normal links. */
+html.js, html.js body { height: 100%; overflow: hidden; }
+html.js body { padding: 26px 24px 30px; }
+.js .notebook { height: 100%; }
+.js main.page { height: 100%; min-height: 0; overflow: hidden; }
+#book { position: relative; z-index: 2; height: 100%; perspective: 2600px; perspective-origin: 30% 50%; }
+.sheet { position: absolute; inset: 0; padding: 32px 40px 0 var(--spiral); overflow: hidden; border-radius: 2px; transform-origin: left center; backface-visibility: hidden;
+  background:
+    linear-gradient(90deg, transparent 74px, var(--margin) 74px, var(--margin) 75.5px, transparent 75.5px),
+    repeating-linear-gradient(transparent 0, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px), var(--rule) var(--line)),
+    var(--paper);
+  background-position: 0 0, 0 -5px, 0 0; box-shadow: 5px 5px 0 #dcd3a8; }
+.sheet.turning { z-index: 2; box-shadow: 10px 6px 0 rgba(111, 90, 63, .25); }
+.sheet-body { overflow: hidden; container-type: inline-size; }
+.sheet-body > :last-child { margin-bottom: 0; }
+.sheet-body > h2:first-child { margin-top: 0; }
+.sheet-body h1 { margin-top: 0; }
+.sheet-foot { position: absolute; left: var(--spiral); right: 40px; bottom: 10px; display: flex; align-items: center; justify-content: flex-end; gap: 12px; height: 32px; font-size: 16px; }
+.sheet-foot button { width: 32px; height: 32px; padding: 0; border: 0; border-radius: 3px; background: #e3bf55; color: var(--tape-ink); font: 22px/28px Newsreader, Georgia, serif; cursor: pointer; }
+.sheet-foot button:hover { background: #d4ae45; }
+.sheet-foot button:disabled { background: #e6dfb9; color: #a39f85; cursor: default; }
+
+/* The photo of the app: an upright page clipped to the notebook */
+.shot { position: relative; width: fit-content; max-width: 100%; margin: 0; }
+.shot img { display: block; width: auto; height: auto; max-width: 100%; max-height: var(--h, calc(var(--line) * 12)); box-shadow: 8px 8px 0 rgba(111, 90, 63, .3); }
+.shot::before { content: ""; position: absolute; z-index: 1; top: -12px; left: 18%; width: 110px; height: 30px; background: color-mix(in srgb, var(--tape) 75%, #fff); opacity: .9; transform: rotate(-2.500deg); clip-path: polygon(0 0, 100% 0, 98% 25%, 100% 50%, 98% 75%, 100% 100%, 0 100%, 2% 75%, 0 50%, 2% 25%); }
+@media (max-width: 1240px) { html.js body { padding-top: 58px; } }
+@media (max-width: 640px) {
+  html.js body { padding: 54px 10px 18px 18px; }
+  .sheet { padding-right: 16px; background: linear-gradient(90deg, transparent 46px, var(--margin) 46px, var(--margin) 47.5px, transparent 47.5px), repeating-linear-gradient(transparent 0, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px), var(--rule) var(--line)), var(--paper); background-position: 0 0, 0 -5px, 0 0; }
+  .sheet-foot { right: 16px; }
+}
+
+/* The brown cover beside the page: downloads and credits */
+:root { --side: 210px; }
+.notebook { display: grid; grid-template-columns: var(--side) minmax(0, 1fr); }
+.notebook::before { left: calc(var(--side) - 18px); }
+.tabs { grid-column: 1 / -1; }
+.side { display: flex; flex-direction: column; min-height: 0; padding: 14px 26px 12px 12px; color: #2b2014; font-size: 16px; line-height: 22px; }
+.side-brand { display: flex; align-items: center; justify-content: center; gap: 8px; font: 600 29px/1 Caveat, cursive; text-decoration: none; }
+.side-brand img { width: 90px; height: 90px; }
+.side h2 { margin: 22px 0 6px; font: 600 25px/1.1 Caveat, cursive; color: #2b2014; }
+.side p { margin: 0 0 8px; max-width: none; }
+.dl { display: grid; gap: 7px; }
+.dl a { display: flex; align-items: center; gap: 9px; padding: 2px 0; color: #2b2014; font-size: 15px; line-height: 19px; text-decoration: none; }
+.dl a:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.dl svg { flex: none; width: 38px; height: 38px; }
+.ver { font-size: 14px; }
+.credits { margin-top: auto; font-size: 14px; line-height: 19px; }
+.madeby { margin: 0 0 8px; font: 600 25px/1.1 Caveat, cursive; }
+.gh { display: inline-block; padding: 3px 16px 4px; border: 2px solid #2b2014; border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; color: #2b2014; font: 600 22px/1.1 Caveat, cursive; text-decoration: none; }
+.gh:hover { background: var(--paper); transform: rotate(-1deg); }
+main.page, #book { grid-column: 2; min-width: 0; }
+@media (max-width: 760px) {
+  .notebook { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .notebook::before { left: -14px; }
+  .side { padding: 4px 6px 8px; flex-flow: row wrap; align-items: center; gap: 8px; }
+  .side-brand { font-size: 24px; width: 100%; }
+  .side-brand img { width: 26px; height: 26px; }
+  .side h2, .ver, .credits { display: none; }
+  .side p { margin: 0; }
+  .dl { grid-auto-flow: column; }
+  .dl a { padding: 4px 7px; font-size: 13px; line-height: 16px; }
+  main.page, #book { grid-column: 1; }
+}
+
+/* Phones: a top-bound notepad. Cover strip, rings across the top, full-width page. */
+@media (max-width: 760px) {
+  html.js body, body { padding: 46px 10px 16px; }
+  .notebook { margin-top: 0; padding: 8px; gap: 0; border-radius: 6px; box-shadow: 7px 8px 0 rgba(40, 26, 12, .42); grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "brand dl" "book book" "credits credits"; }
+  html:not(.js) .notebook { grid-template-rows: auto auto auto; }
+  .notebook::before { display: none; }
+  .side { display: contents; }
+  .side h2, .ver { display: none; }
+  .side-brand { grid-area: brand; width: auto; padding: 0 12px 16px 4px; }
+  .side-brand img { width: 50px; height: 50px; }
+  .dl { grid-area: dl; display: grid; grid-auto-flow: row; gap: 2px; margin: 0; padding-bottom: 16px; align-self: center; }
+  .dl a { padding: 0; gap: 7px; font-size: 14px; line-height: 18px; }
+  .dl svg { width: 24px; height: 24px; }
+  .dl br { display: none; }
+  .credits { grid-area: credits; display: flex; align-items: center; justify-content: space-between; margin: 0; padding: 9px 4px 1px; }
+  .madeby { margin: 0; font-size: 21px; }
+  .gh { padding: 1px 12px 2px; font-size: 19px; }
+  main.page, #book { grid-area: book; min-height: 0; }
+  #book { perspective: 1500px; perspective-origin: 50% 0; }
+  #book::before { content: ""; position: absolute; z-index: 5; top: -19px; left: 6px; right: 6px; height: 40px; pointer-events: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='40'%3E%3Cpolygon points='10,25 20,25 22,30 20,35 10,35 8,30' fill='%23776247'/%3E%3Cpolygon points='12,31 8,22 8,10 11,3 17,3 20,8 18,10 15,7 13,8 12,12 13,22 17,31' fill='%23c6cacb'/%3E%3C/svg%3E") 0 0 / 30px 40px round no-repeat; }
+  .sheet { padding: 32px 14px 0 22px; transform-origin: center top; box-shadow: 3px 3px 0 #dcd3a8; background: linear-gradient(90deg, transparent 13px, var(--margin) 13px, var(--margin) 14.5px, transparent 14.5px), repeating-linear-gradient(transparent 0, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px), var(--rule) var(--line)), var(--paper); background-position: 0 0, 0 -5px, 0 0; }
+  .page { padding: 32px 14px var(--line) 22px; }
+  .sheet-foot { left: 22px; right: 14px; bottom: 8px; }
+  .tabs { position: absolute; bottom: 100%; left: 12px; margin: 0; }
+  .tabs a { width: auto; padding: 3px 13px 6px; font-size: 21px; line-height: 24px; box-shadow: none; }
+  h1 { height: 56px; margin-bottom: var(--line); padding: 2px 12px; font-size: 32px; line-height: 50px; }
+  body { font-size: 18px; }
+  h2 { font-size: 27px; }
+  p { max-width: none; }
+}
+@media (min-width: 761px) and (max-width: 1240px) {
+  html.js body { padding-top: 14px; }
+  .js .notebook { height: calc(100% - 44px); margin-top: 44px; }
+}
+
+.sheet-body p:has(+ .shot) { margin-bottom: 0; }
