@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, ipcMain, shell, dialog, powerMonitor, Menu, net } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog, powerMonitor, Menu, net, screen } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { Vault, VAULT, THEME_DATE } = require('./vault');
@@ -32,7 +32,7 @@ function sanitizeTheme(t) {
   for (const k of COLOR_KEYS) if (/^#[0-9a-f]{6}$/i.test(t?.colors?.[k] || '')) colors[k] = t.colors[k];
   const font = t?.font?.google ? { google: String(t.font.google).slice(0, 80) }
     : { builtin: ['typewriter', 'book', 'hand'].includes(t?.font?.builtin) ? t.font.builtin : 'typewriter' };
-  return { colors, font, imageTape: t?.imageTape !== false };
+  return { colors, font, imageTape: t?.imageTape !== false, toolProps: t?.toolProps !== false };
 }
 async function runSync() {
   if (!drive || !vault.unlocked) return;
@@ -183,8 +183,12 @@ ipcMain.handle('rn', async (event, name, args) => {
 });
 
 function createWindow() {
+  // Opens notebook-shaped: a little taller than it is wide.
+  const wa = screen.getPrimaryDisplay().workAreaSize;
+  const h = Math.round(wa.height * 0.9);
+  const w = Math.max(720, Math.min(Math.round(h * 0.8), wa.width - 40));
   win = new BrowserWindow({
-    width: 1120, height: 760, minWidth: 720, minHeight: 520,
+    width: w, height: h, center: true, minWidth: 720, minHeight: 520,
     title: 'RabbitNote', backgroundColor: '#b39467', autoHideMenuBar: true,
     icon: path.join(__dirname, '../renderer/icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, nodeIntegration: false, spellcheck: true },

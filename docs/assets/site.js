@@ -7,6 +7,13 @@
 
   function key(u) { return new URL(u, location.href).pathname.replace(/index\.(php|html)$/, ''); }
 
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-copy]');
+    if (!b) return;
+    navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function () {
+      b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1500);
+    });
+  });
   document.addEventListener('DOMContentLoaded', function () {
     var notebook = document.querySelector('.notebook');
     var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabs a'));
@@ -15,7 +22,7 @@
     // The address changes as pages turn, so relative links must be pinned first.
     Array.prototype.forEach.call(document.querySelectorAll('a[href]'), function (n) { n.setAttribute('href', n.href); });
     Array.prototype.forEach.call(document.querySelectorAll('img[src]'), function (n) { n.setAttribute('src', n.src); });
-    var routes = tabs.map(function (a) { return { key: key(a.href), url: a.href, tab: a, title: '', blocks: [] }; });
+    var routes = tabs.map(function (a) { return { key: key(a.href), name: a.textContent.trim(), url: a.href, tab: a, title: '', blocks: [] }; });
     var here = key(location.href);
 
     function take(r, doc, base) {
@@ -65,7 +72,7 @@
         var queue = [];
         r.blocks.forEach(function (b) {
           if (b.tagName === 'UL') {
-            Array.prototype.forEach.call(b.children, function (li) { var u = document.createElement('ul'); u.appendChild(li.cloneNode(true)); queue.push(u); });
+            Array.prototype.forEach.call(b.children, function (li) { var u = document.createElement('ul'); u.className = b.className; u.appendChild(li.cloneNode(true)); queue.push(u); });
           } else queue.push(b.cloneNode(true));
         });
         while (queue.length) {
@@ -117,14 +124,16 @@
       var p = pages[i], s = makeSheet(), b = s.firstChild;
       b.style.height = room + 'px';
       p.nodes.forEach(function (n) { b.appendChild(n.cloneNode(true)); });
-      // Arrows only when this section runs over more than one page; tabs move between sections.
-      var hasPrev = i > 0 && pages[i - 1].route === p.route, hasNext = i < pages.length - 1 && pages[i + 1].route === p.route;
-      if (hasPrev || hasNext) {
-        var foot = document.createElement('div'); foot.className = 'sheet-foot';
-        var prev = document.createElement('button'); prev.type = 'button'; prev.textContent = '‹'; prev.setAttribute('aria-label', 'Previous page'); prev.disabled = !hasPrev; prev.onclick = function () { go(i - 1); };
-        var next = document.createElement('button'); next.type = 'button'; next.textContent = '›'; next.setAttribute('aria-label', 'Next page'); next.disabled = !hasNext; next.onclick = function () { go(i + 1); };
-        foot.appendChild(prev); foot.appendChild(next); s.appendChild(foot);
+      // Arrows go through every page; the forward one says where it leads.
+      var foot = document.createElement('div'); foot.className = 'sheet-foot';
+      var prev = document.createElement('button'); prev.type = 'button'; prev.className = 'pg-prev'; prev.textContent = '‹'; prev.setAttribute('aria-label', 'Previous page'); prev.disabled = i === 0; prev.onclick = function () { go(i - 1); };
+      foot.appendChild(prev);
+      if (i < pages.length - 1) {
+        var nx = pages[i + 1].route, label = nx === p.route ? 'Next page' : nx.name;
+        var next = document.createElement('button'); next.type = 'button'; next.className = 'pg-next'; next.innerHTML = '<span></span> ›'; next.firstChild.textContent = label; next.onclick = function () { go(i + 1); };
+        foot.appendChild(next);
       }
+      s.appendChild(foot);
       return s;
     }
 
@@ -132,6 +141,7 @@
       var r = pages[at].route;
       routes.forEach(function (x) { if (x === r) x.tab.setAttribute('aria-current', 'page'); else x.tab.removeAttribute('aria-current'); });
       document.title = r.title;
+      document.body.dataset.route = r.name.toLowerCase();
       if (push && key(location.href) !== r.key) history.pushState({}, '', r.url);
     }
 
@@ -177,7 +187,7 @@
       });
       document.addEventListener('keydown', function (e) {
         var d = (e.key === 'ArrowRight' || e.key === 'PageDown') ? 1 : (e.key === 'ArrowLeft' || e.key === 'PageUp') ? -1 : 0;
-        if (d && pages[at + d] && pages[at + d].route === pages[at].route) go(at + d);
+        if (d) go(at + d);
       });
       window.addEventListener('popstate', function () { var i = startOf(key(location.href)); if (i >= 0) go(i, false); });
       var t;

@@ -198,3 +198,14 @@ dialog.sheet::backdrop { background: color-mix(in srgb, var(--kraft-ink) 25%, tr
 .ink-box.erasing .ink path { pointer-events: stroke; }
 .pic::before { content: ""; position: absolute; z-index: 1; top: -5px; left: 50%; width: 92px; height: 28px; margin-left: -46px; background: color-mix(in srgb, var(--tape) 72%, #fff); opacity: .88; transform: rotate(-2.500deg); clip-path: polygon(0 0, 100% 0, 98% 25%, 100% 50%, 98% 75%, 100% 100%, 0 100%, 2% 75%, 0 50%, 2% 25%); }
 body[data-pic-tape="off"] .pic::before { display: none; }
+
+/* A tool peeks in from the bottom-right corner while it is in use */
+.prop { position: fixed; z-index: 25; right: 0; bottom: 0; width: 0; height: 0; pointer-events: none; }
+.prop svg { position: absolute; left: -150px; top: -250px; height: auto; transform-origin: 50% 0; transform: rotate(-38deg) translateY(110%); transition: transform .45s cubic-bezier(.2, .8, .25, 1); }
+.prop svg.on { transform: rotate(-38deg) translateY(0); }
+.prop .p-highlighter { width: 92px; }
+.prop .p-pencil { width: 74px; }
+.prop .p-ruler { width: 108px; }
+.prop .p-tape { width: 300px; left: -170px; top: -150px; transform: rotate(-20deg) translate(30%, 70%); }
+.prop .p-tape.on { transform: rotate(-20deg) translate(0, 0); }
+@media (prefers-reduced-motion: reduce) { .prop svg { transition: none; } }

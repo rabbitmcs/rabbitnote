@@ -19,10 +19,11 @@ const COLORS = [
   ['err', 'Error messages', '#8e1f16'],
 ];
 
-const S = window.S = { strokes: [], drawing: false, erasing: false, penW: 2, pen: null, hl: HL_COLORS[0], date: todayStr(), base: 0, loaded: '', view: new Date(), days: new Set(), tags: {}, timer: null, status: { state: 'off' }, gateMode: 'unlock', opening: false };
+setTimeout(() => setHlColor(HL_COLORS[0]));
+const S = window.S = { popKind: null, strokes: [], drawing: false, erasing: false, penW: 2, pen: null, hl: HL_COLORS[0], date: todayStr(), base: 0, loaded: '', view: new Date(), days: new Set(), tags: {}, timer: null, status: { state: 'off' }, gateMode: 'unlock', opening: false };
 
 // ---------- theme ----------
-let theme = { colors: {}, font: { builtin: 'typewriter' }, imageTape: true };
+let theme = { colors: {}, font: { builtin: 'typewriter' }, imageTape: true, toolProps: true };
 const loadedFonts = new Set();
 
 function applyColors() {
@@ -63,7 +64,7 @@ async function applyFont() {
   await alignRules();
 }
 function setThemeLocal(t) {
-  theme = { colors: { ...(t?.colors || {}) }, font: t?.font || { builtin: 'typewriter' }, imageTape: t?.imageTape !== false };
+  theme = { colors: { ...(t?.colors || {}) }, font: t?.font || { builtin: 'typewriter' }, imageTape: t?.imageTape !== false, toolProps: t?.toolProps !== false };
   applyColors();
   document.body.dataset.picTape = theme.imageTape ? 'on' : 'off';
   return applyFont();
@@ -76,6 +77,7 @@ function renderThemeControls() {
   document.querySelectorAll('input[name=font]').forEach((r) => { r.checked = !theme.font.google && r.value === (theme.font.builtin || 'typewriter'); });
   $('gfInput').value = theme.font.google || '';
   $('imgTape').checked = theme.imageTape;
+  $('toolProps').checked = theme.toolProps;
   const box = $('colors');
   if (!box.children.length) {
     for (const [k, label] of COLORS) {
@@ -368,6 +370,37 @@ ed.addEventListener('drop', (e) => {
   if (files.length) insertImages(files);
   else { const t = e.dataTransfer.getData('text/plain'); if (t) document.execCommand('insertText', false, t); }
 });
+// ---------- tool props ----------
+const propBox = $('prop');
+Object.entries(window.PROPS).forEach(([k, svg]) => {
+  propBox.insertAdjacentHTML('beforeend', svg);
+  propBox.lastElementChild.setAttribute('class', `p-${k}`);
+});
+let propLinger = null; let propTimer = null;
+function wantedProp() {
+  if (S.drawing) return 'pencil';
+  if (S.popKind) return S.popKind;
+  if (propLinger) return propLinger;
+  const n = getSelection().anchorNode; const el = n?.nodeType === 1 ? n : n?.parentElement;
+  if (el && ed.contains(el)) {
+    if (el.closest('.tape-title')) return 'tape';
+    if (el.closest('.sk-table')) return 'ruler';
+  }
+  return null;
+}
+function updateProp() {
+  if (!theme.toolProps) { propBox.querySelectorAll('svg').forEach((s) => s.classList.remove('on')); return; }
+  const w = wantedProp();
+  propBox.querySelectorAll('svg').forEach((s) => s.classList.toggle('on', s.classList.contains(`p-${w}`)));
+}
+function lingerProp(k) { propLinger = k; clearTimeout(propTimer); propTimer = setTimeout(() => { propLinger = null; updateProp(); }, 1400); updateProp(); }
+document.addEventListener('selectionchange', () => updateProp());
+function setHlColor(c) {
+  S.hl = c; $('tHlSwatch').style.background = c;
+  document.documentElement.style.setProperty('--hl', c);
+  document.documentElement.style.setProperty('--hl-dark', `color-mix(in srgb, ${c} 80%, #000)`);
+}
+
 // ---------- toolbar ----------
 function restoreCaret() {
   if (S.drawing) return false;
@@ -409,8 +442,9 @@ function syncTools() {
 document.addEventListener('selectionchange', syncTools);
 
 const pop = $('pop');
-function closePop() { pop.hidden = true; pop.textContent = ''; }
-function openPop(x, y) {
+function closePop() { pop.hidden = true; pop.textContent = ''; S.popKind = null; updateProp(); }
+function openPop(x, y, kind) {
+  S.popKind = kind || null; updateProp();
   pop.hidden = false;
   pop.style.left = `${Math.min(x, innerWidth - pop.offsetWidth - 10)}px`;
   pop.style.top = `${Math.min(y, innerHeight - pop.offsetHeight - 10)}px`;
@@ -432,7 +466,7 @@ $('tHl').onclick = () => {
   HL_COLORS.forEach((c) => {
     const b = document.createElement('button'); b.className = 'hl-dot'; b.style.background = c; b.title = 'Highlight'; b.setAttribute('aria-label', `Highlight ${c}`);
     noSteal(b);
-    b.onclick = () => { S.hl = c; $('tHlSwatch').style.background = c; applyHighlight(c); closePop(); };
+    b.onclick = () => { setHlColor(c); applyHighlight(c); closePop(); lingerProp('highlighter'); };
     row.append(b);
   });
   const none = document.createElement('button'); none.className = 'hl-dot hl-none'; none.title = 'Remove highlight'; none.setAttribute('aria-label', 'Remove highlight'); noSteal(none);
@@ -441,10 +475,11 @@ $('tHl').onclick = () => {
   const row2 = document.createElement('div'); row2.className = 'pop-row';
   const l = document.createElement('label'); l.textContent = 'Custom color';
   const c = document.createElement('input'); c.type = 'color'; c.value = S.hl;
-  c.onchange = () => { S.hl = c.value; $('tHlSwatch').style.background = c.value; applyHighlight(c.value); closePop(); };
+  c.oninput = () => setHlColor(c.value);
+  c.onchange = () => { setHlColor(c.value); applyHighlight(c.value); closePop(); lingerProp('highlighter'); };
   l.append(c); row2.append(l);
   pop.append(row, row2);
-  openPop(...under($('tHl')));
+  openPop(...under($('tHl')), 'highlighter');
 };
 $('tTape').onclick = () => {
   const c = getComputedStyle(document.documentElement).getPropertyValue('--tape').trim();
@@ -470,7 +505,7 @@ $('tTable').onclick = () => {
     }
   }
   pop.append(grid, label);
-  openPop(...under($('tTable')));
+  openPop(...under($('tTable')), 'ruler');
 };
 ed.addEventListener('contextmenu', (e) => {
   const table = e.target.closest?.('.sk-table'); const tape = e.target.closest?.('.tape-title');
@@ -501,7 +536,7 @@ ed.addEventListener('contextmenu', (e) => {
     del.onclick = () => { tape.remove(); closePop(); onEdit(); };
     row.append(l, del); pop.append(row);
   }
-  openPop(e.clientX, e.clientY);
+  openPop(e.clientX, e.clientY, table ? 'ruler' : 'tape');
 });
 
 // Draw mode
@@ -513,6 +548,7 @@ function setDrawing(on) {
   $('drawErase').setAttribute('aria-pressed', 'false');
   $('drawTools').hidden = !on;
   sizeInk();
+  updateProp();
   if (!on) flush();
 }
 $('tDraw').onclick = () => setDrawing(!S.drawing);
@@ -835,8 +871,9 @@ $('gfInput').addEventListener('change', async () => {
   await applyFont();
   if (!$('gfMsg').textContent.startsWith('Could not')) saveTheme();
 });
+$('toolProps').onchange = () => { theme.toolProps = $('toolProps').checked; updateProp(); saveTheme(); };
 $('imgTape').onchange = () => { theme.imageTape = $('imgTape').checked; document.body.dataset.picTape = theme.imageTape ? 'on' : 'off'; saveTheme(); };
-$('resetColors').onclick = () => { theme = { colors: {}, font: { builtin: 'typewriter' }, imageTape: theme.imageTape }; applyColors(); applyFont(); renderThemeControls(); saveTheme(); };
+$('resetColors').onclick = () => { theme = { colors: {}, font: { builtin: 'typewriter' }, imageTape: theme.imageTape, toolProps: theme.toolProps }; applyColors(); applyFont(); renderThemeControls(); saveTheme(); };
 $('syncNow').onclick = () => call('syncNow');
 $('driveOff').onclick = async () => { await call('driveDisconnect'); renderDrive(); };
 $('driveOn2').onclick = async () => {

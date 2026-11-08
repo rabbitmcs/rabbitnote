@@ -1,7 +1,7 @@
 {
   "name": "rabbitnote",
   "productName": "RabbitNote",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A minimal encrypted notebook with Google Drive sync",
   "main": "src/main/main.js",
   "author": "Rabbit",

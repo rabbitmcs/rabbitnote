@@ -4,7 +4,7 @@
 
 A private notebook for Linux. One ruled paper page per day, with a calendar, #tags and search.
 
-**[Website](https://rabbitmcs.github.io/rabbitnote/)** · **[Download for Ubuntu/Kubuntu (.deb)](https://itsrabbit.com/downloads/rabbitnote_1.3.0_amd64.deb)** · **[Download for other Linux (AppImage)](https://itsrabbit.com/downloads/RabbitNote-1.3.0.AppImage)**
+**[Website](https://rabbitmcs.github.io/rabbitnote/)** · **[Download for Ubuntu/Kubuntu (.deb)](https://itsrabbit.com/downloads/rabbitnote_1.4.0_amd64.deb)** · **[Download for other Linux (AppImage)](https://itsrabbit.com/downloads/RabbitNote-1.4.0.AppImage)**
 
 ![RabbitNote](docs/assets/app-window.jpg)
 
