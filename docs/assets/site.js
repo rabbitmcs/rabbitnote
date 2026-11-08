@@ -136,7 +136,7 @@
         var nx = pages[i + 1].route, label = nx === p.route ? 'Next page' : nx.name;
         if (i === 0) {
           var hint = document.createElement('span'); hint.className = 'see-more';
-          hint.innerHTML = 'See more<svg viewBox="0 0 62 34" aria-hidden="true"><path d="M3 10C18 4 34 6 46 16C50 20 53 24 56 28"/><path d="M45 26L56 28L57 17"/></svg>';
+          hint.innerHTML = 'See more<svg viewBox="0 0 62 34" aria-hidden="true"><path d="M3 20C14 31 32 32 43 22C48 17 52 13 57 9"/><path d="M47 8L57 9L55 19"/></svg>';
           foot.appendChild(hint);
         }
         var next = document.createElement('button'); next.type = 'button'; next.className = 'pg-next';
