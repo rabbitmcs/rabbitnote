@@ -43,7 +43,7 @@ a { color: inherit; text-underline-offset: 3px; }
 
 .brand { display: flex; align-items: center; gap: 8px; height: 64px; font: 600 28px/1 Kalam, cursive; text-decoration: none; }
 .brand img { width: 32px; height: 32px; }
-h1 { display: block; width: fit-content; margin: 6px 0 var(--line); padding: 3px 20px 4px; height: 64px; background: color-mix(in srgb, var(--tape) 62%, transparent); color: var(--tape-ink); font: 600 31px/58px Kalam, cursive; transform: rotate(-.8deg);  }
+h1 { display: block; width: fit-content; margin: 6px 0 var(--line); padding: 3px 20px 4px; height: 64px; background: color-mix(in srgb, var(--tape) 62%, transparent); color: var(--tape-ink); font: 600 42px/60px Kalam, cursive; transform: rotate(-.8deg);  }
 h2 { margin: var(--line) 0 0; font: 600 23px/var(--line) Kalam, cursive; }
 p, ul { margin: 0 0 var(--line); max-width: 66ch; }
 ul { padding-left: 22px; }
@@ -158,7 +158,7 @@ main.page, #book { grid-column: 2; min-width: 0; }
   .sheet-foot { left: 22px; right: 14px; bottom: 8px; }
   .tabs { position: absolute; bottom: 100%; left: 12px; margin: 0; }
   .tabs a { width: auto; padding: 3px 13px 6px; font-size: 15px; line-height: 24px; box-shadow: none; }
-  h1 { height: 56px; margin-bottom: var(--line); padding: 2px 12px; font-size: 25px; line-height: 52px; }
+  h1 { height: 56px; margin-bottom: var(--line); padding: 2px 12px; font-size: 32px; line-height: 54px; }
   body { font-size: 16px; }
   h2 { font-size: 21px; }
   p { max-width: none; }
@@ -210,7 +210,7 @@ body[data-route="features"] .dt { transform: translateY(0) rotate(var(--r)); }
 .feat h2 { margin: 0; }
 .feat p { margin: 0; }
 .fi { display: grid; place-items: center; height: 64px; align-self: start; overflow: visible; }
-.fi img { display: block; height: 100px; width: auto; transform: rotate(-55deg); }
+.fi img { display: block; height: 100px; width: auto; transform: rotate(var(--rot, -50deg)); }
 .fi .fi-flat { height: 58px; transform: none; }
 .fi-text { gap: 3px; grid-auto-flow: column; font: 25px/1 Georgia, serif; color: var(--ink); }
 @media (max-width: 760px) { .feat li { grid-template-columns: 56px minmax(0, 1fr); column-gap: 12px; } .fi img { height: 56px; } .fi .fi-flat { height: 42px; } .fi-text { font-size: 18px; } }
