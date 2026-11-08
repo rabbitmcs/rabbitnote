@@ -174,11 +174,11 @@ main.page, #book { grid-column: 2; min-width: 0; }
 .sheet-foot { gap: 8px; }
 .sheet-foot .pg-next { width: auto; padding: 0 12px 0 14px; font: 600 22px/32px Caveat, cursive; white-space: nowrap; }
 .feat { list-style: none; padding: 0; margin: 0 0 var(--line); }
-.feat li { display: flex; align-items: flex-start; gap: 18px; margin: 0; min-height: calc(var(--line) * 3); }
+.feat li { display: flex; align-items: center; gap: 22px; margin: 0; min-height: calc(var(--line) * 3); }
 .sheet-body ul.feat { margin: 0; }
 .feat h2 { margin: 0; line-height: var(--line); }
 .feat p { margin: 0; }
-.fi { flex: none; width: 64px; height: 88px; object-fit: contain; object-position: top; transform: rotate(-30deg) translateY(4px); }
+.fi { flex: none; width: 76px; height: 96px; object-fit: contain; object-position: top; transform: rotate(-30deg) translateY(4px); }
 .fi-tape { width: 64px; height: 64px; transform: none; margin-top: 8px; }
 .fi-text { transform: none; display: flex; align-items: center; justify-content: center; gap: 4px; height: 56px; font: 26px/1 Georgia, serif; color: var(--ink); }
 .fi-photo { transform: rotate(-4deg); height: 52px; margin-top: 10px; background: linear-gradient(160deg, #a9c79a 0 55%, #7fa36e 55%); box-shadow: 0 0 0 5px #fffdf2, 4px 5px 0 5px rgba(111, 90, 63, .22); position: relative; }

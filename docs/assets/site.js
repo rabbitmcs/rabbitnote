@@ -2,6 +2,25 @@
   'use strict';
   var root = document.documentElement;
   root.classList.add('js');
+  // Font previews: ?font=1..5 (remembered for this tab).
+  var FONTS = {
+    2: ['Kalam:wght@400;700', 'Kalam', 'Lora:ital@0;1', 'Lora'],
+    3: ['Patrick+Hand', 'Patrick Hand', 'Nunito:ital@0;1', 'Nunito'],
+    4: ['Architects+Daughter', 'Architects Daughter', 'Courier+Prime:ital@0;1', 'Courier Prime'],
+    5: ['Gochi+Hand', 'Gochi Hand', 'Crimson+Pro:ital@0;1', 'Crimson Pro']
+  };
+  var fq = new URLSearchParams(location.search).get('font');
+  try { if (fq) sessionStorage.setItem('rnFont', fq); else fq = sessionStorage.getItem('rnFont'); } catch (e) { /* storage blocked */ }
+  var pick = FONTS[fq];
+  if (pick) {
+    var l = document.createElement('link'); l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=' + pick[0] + '&family=' + pick[2] + '&display=block';
+    document.head.appendChild(l);
+    var st = document.createElement('style');
+    st.textContent = 'body,.dl-card span,.coins li{font-family:"' + pick[3] + '",serif!important}' +
+      'h1,h2,.tabs a,.madeby,.gh,.pg-next,.dl-card b,.coins b,.coins button,.side-brand{font-family:"' + pick[1] + '",cursive!important}';
+    document.head.appendChild(st);
+  }
   var LINE = 32;
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -137,6 +156,16 @@
       return s;
     }
 
+    // Spread the feature list out to fill its page.
+    function fillFeat(sheet) {
+      var items = sheet.querySelectorAll('.feat > li'); if (!items.length) return;
+      var body = sheet.querySelector('.sheet-body'), last = body.lastElementChild;
+      var free = room - (last.offsetTop + last.offsetHeight - body.offsetTop);
+      // Space goes into the gaps between features, in whole ruled lines.
+      var gaps = items.length - 1, extra = gaps > 0 ? Math.floor(free / LINE / gaps) : 0;
+      if (extra > 0) Array.prototype.forEach.call(items, function (li, n) { if (n < gaps) li.style.minHeight = (li.offsetHeight + extra * LINE) + 'px'; });
+    }
+
     function mark(push) {
       var r = pages[at].route;
       routes.forEach(function (x) { if (x === r) x.tab.setAttribute('aria-current', 'page'); else x.tab.removeAttribute('aria-current'); });
@@ -151,10 +180,11 @@
       var forward = i > at, old = book.querySelector('.sheet'), neu = render(i);
       at = i; mark(push !== false);
       var done = function () { if (old.parentNode) old.remove(); busy = false; neu.style.zIndex = ''; var q = queued; queued = null; if (q !== null) go(q); };
-      if (calm || !old.animate) { book.appendChild(neu); done(); return; }
+      if (calm || !old.animate) { book.appendChild(neu); fillFeat(neu); done(); return; }
       busy = true;
       var turn = forward ? old : neu;
       if (forward) book.insertBefore(neu, old); else book.appendChild(neu);
+      fillFeat(neu);
       turn.classList.add('turning');
       var top = window.matchMedia('(max-width: 760px)').matches; // phones flip up like a notepad
       var r = function (d) { return top ? 'rotateX(' + (-d) + 'deg)' : 'rotateY(' + d + 'deg)'; };
@@ -174,7 +204,7 @@
       notebook.replaceChild(book, main);
       room = paginate();
       at = Math.max(0, startOf(here));
-      book.appendChild(render(at));
+      var first = render(at); book.appendChild(first); fillFeat(first);
       mark(false);
       document.addEventListener('click', function (e) {
         if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -196,7 +226,7 @@
         t = setTimeout(function () {
           room = paginate();
           var cur = book.querySelector('.sheet'); if (cur) cur.remove();
-          book.appendChild(render(at)); mark(false);
+          var first = render(at); book.appendChild(first); fillFeat(first); mark(false);
         }, 150);
       });
     }
