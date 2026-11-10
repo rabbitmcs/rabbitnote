@@ -191,7 +191,7 @@ main.page, #book { grid-column: 2; min-width: 0; }
 .dt-ruler { --r: -5deg; left: 330px; width: 96px; bottom: -110px; transition-delay: .08s; }
 .dt-tape { --r: 0deg; left: 250px; width: 150px; bottom: 430px; transform: translateY(calc(100% + 430px)); transition-delay: .16s; }
 body[data-route="features"] .dt { transform: translateY(0) rotate(var(--r)); }
-@media (max-width: 1700px) { .dt-highlighter { left: 140px; width: 64px; } .props .dt-ruler, .props .dt-tape { display: none; } }
+@media (max-width: 1700px) { .props .phone, .props .dt { display: none; } }
 @media (prefers-reduced-motion: reduce) { .dt { transition: none; } }
 @media (max-width: 760px) {
   .notebook { grid-template-areas: "brand brand" "book book" "credits credits"; }
@@ -205,7 +205,7 @@ body[data-route="features"] .dt { transform: translateY(0) rotate(var(--r)); }
 .feat { list-style: none; padding: 0; margin: 0; }
 .sheet-body ul.feat { margin: 0; }
 .feat li { position: relative; display: grid; grid-template-columns: 92px minmax(0, 1fr); column-gap: 18px; margin: 0; padding-bottom: var(--gap, 32px); }
-.feat li::after { content: ""; position: absolute; left: 0; right: 30px; bottom: calc(var(--gap, 32px) / 2 - 5px); height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='10' viewBox='0 0 400 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6C40 3 70 7 110 5S180 2 220 5 300 8 340 4 380 5 398 6' fill='none' stroke='%231f2c55' stroke-opacity='.45' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat; }
+.feat li::after { content: ""; position: absolute; left: 110px; right: 30px; bottom: calc(var(--gap, 32px) / 2 - 5px); height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='10' viewBox='0 0 400 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6C40 3 70 7 110 5S180 2 220 5 300 8 340 4 380 5 398 6' fill='none' stroke='%231f2c55' stroke-opacity='.45' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat; }
 .sheet-body > ul.feat:last-of-type li::after { display: none; }
 .feat h2 { margin: 0; }
 .feat p { margin: 0; }
