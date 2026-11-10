@@ -10,7 +10,8 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test test/core.test.js",
-    "dist": "electron-builder --linux deb AppImage --publish never"
+    "dist": "electron-builder --linux deb AppImage --publish never",
+    "dist:win": "electron-builder --win nsis --publish never"
   },
   "build": {
     "appId": "com.itsrabbit.rabbitnote",
@@ -26,12 +27,28 @@
       "icon": "build/icon.png",
       "maintainer": "Rabbit",
       "synopsis": "Encrypted notebook"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "RabbitNote",
+      "uninstallDisplayName": "RabbitNote"
     }
   },
   "devDependencies": {
     "@fontsource/caveat": "^5.3.0",
     "@fontsource/courier-prime": "^5.3.0",
     "@fontsource/kalam": "^5.3.0",
+    "@fontsource/lora": "^5.3.0",
     "@fontsource/newsreader": "^5.3.0",
     "electron": "^45.2.1",
     "electron-builder": "^26.18.0"
